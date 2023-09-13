@@ -1,34 +1,60 @@
 import numpy as np
 from test_env import RuntimeConfig
 from FPT.vo.pd_mapping_vo import PDMappingVO
+from FPT.vo.feature_mappin import feature_map
+import pandas as pd
 
 
-def split_data(x,y):
-    return x[:70] , x[70:] , y[:70] , y[70:]
+def split_data(x,y, train_size):
+    x_train , x_test , y_train , y_test = x[:train_size] , x[train_size:] , y[:train_size] , y[train_size:]
+    return  x_train , x_test , y_train , y_test 
 
-def make_feature_custom(df):
-    sum_deposit = df[PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME].to_list()
-    sum_balance = df[PDMappingVO.BALANCE_MONEY_OUTPUT_NAME].to_list()
-    sum_payment = df[PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME].to_list()
-    is_IPO_ticket = df[PDMappingVO.IPO_TICKET].to_list()
-    dollar = df[PDMappingVO.DOLLAR_VALUE].to_list()
-    index = df[PDMappingVO.INDEX_INDEX_VALUE].to_list()
-    fast_pay = df[PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME].to_list()
 
-    y_real_Imines1 = []
+def ratio_to_prev(data_df : pd.DataFrame ,feature_df : pd.DataFrame,  column_name :str, period:int = 1) -> pd.DataFrame:
+    new_column_name = column_name + PDMappingVO.RATIO+str(period)
+    feature_df[new_column_name] =  data_df[column_name].pct_change(periods = period)
+    return feature_df, new_column_name
+
+def dividing_two_column(data_df : pd.DataFrame ,feature_df : pd.DataFrame, column1_name :str, column2_name :str)-> pd.DataFrame:
+    new_column_name = column1_name + PDMappingVO.DIVIDE + column1_name
+    feature_df[new_column_name] =  data_df[[column1_name]].div(data_df[column2_name], axis=0 )
+    return feature_df, new_column_name
+
+def make_feature_custom(data_df):
+    target_column: str = ""
+    feature_df = pd.DataFrame()
+    for feature_item in feature_map:
+        column_name = feature_item[PDMappingVO.COLUMN_NAME]
+        if PDMappingVO.RATIO_PERIODS in feature_item:
+            for period in feature_item[ PDMappingVO.RATIO_PERIODS]:
+                feature_df, new_column_name = ratio_to_prev(data_df, feature_df,column_name, period )
+
+        if PDMappingVO.DIVIDING in feature_item:
+            for divide_column in feature_item[PDMappingVO.DIVIDING]:
+                feature_df, new_column_name =  dividing_two_column(data_df, feature_df, column_name, divide_column)
+
+        if PDMappingVO.KEEP_COLUMN in feature_item and feature_item[PDMappingVO.KEEP_COLUMN] :
+            new_column_name = column_name
+            feature_df[column_name] = data_df[column_name]
+
+        if PDMappingVO.AS_TARGET in feature_item and feature_item[PDMappingVO.AS_TARGET]:
+            target_column = new_column_name
+
+
+
+
+
+
+    feature_df=feature_df.dropna()
+
+    target_list = feature_df[target_column].to_list()
+    feature_df = feature_df.drop(columns = [target_column])
+    feature_list = np.array(feature_df)
     x = []
     y = []
 
-    for i in range(48 , len(fast_pay)):
-        y_real_Imines1.append(fast_pay[i-1])
-        y.append((fast_pay[i] - fast_pay[i-1]) / fast_pay[i-1])
-        x.append([ sum_deposit[i-1]/sum_balance[i-1] ,
-                sum_payment[i-1]/sum_balance[i-1] ,
-                (fast_pay[i-1] - fast_pay[i-2]) / fast_pay[i-2] ,
-                (fast_pay[i-2] - fast_pay[i-3]) / fast_pay[i-3] ,
-                (fast_pay[i-3] - fast_pay[i-4]) / fast_pay[i-4] ,
-                    (dollar[i-1] - dollar[i-2]) / dollar[i-2] ,
-                    (index[i-1] - index[i-2]) / index[i-2] ,
-                    is_IPO_ticket[i] ])
+    for i in range(48 , len(feature_df)):
+        y.append(target_list[i])
+        x.append(feature_list[i-1])
         
-    return split_data(np.array(x) , np.array(y))
+    return split_data(np.array(x) , np.array(y), train_size = 100)

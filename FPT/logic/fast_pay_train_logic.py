@@ -1,12 +1,13 @@
 import pandas as pd
-from gcl.utils.base.singleton import Singleton
+# from gcl.utils.base.singleton import Singleton
 from FPT.logic.pandas_functions import *
 from FPT.logic.preprocess_functions import *
 from FPT.utils.pd_plot import *
 from FPT.logic.feature_functions import *
 from FPT.logic.train_functions import *
 
-class FastPayTrainLogic(metaclass=Singleton):
+# class FastPayTrainLogic(metaclass=Singleton):
+class FastPayTrainLogic():
     def __init__(
         self,
     ) -> None:

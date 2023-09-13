@@ -18,6 +18,11 @@ class PDMappingVO():
     INDEX_SINCE:str = "Since"
     INDEX_VALUE:str = "Value"
     INDEX_INDEX_VALUE:str = "index_value"
+    KEEP_COLUMN:str = "keep_column"
+    AS_TARGET:str = "as_target"
+
+
+    
     
     
     BALANCE_TABLE_NAME:str = "CustomerBalance"
@@ -43,4 +48,10 @@ class PDMappingVO():
     SUM_HARMONEY_CHECK:str = 'sum_harmony_check'
     IPO_NAME:str = "Name"
     IPO_TICKET:str = 'is_IPO_ticket'
+
+    RATIO:str = "_ratio_"
+    DIVIDE:str = "_divide_"
+    COLUMN_NAME:str = "column_name"
+    RATIO_PERIODS:str= "ratio_periods"
+    DIVIDING:str = "dividing"
     

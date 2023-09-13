@@ -1,7 +1,8 @@
-from gcl.utils.config.common_config import CommonsBaseConfig
+# from gcl.utils.config.common_config import CommonsBaseConfig
 
 
-class RuntimeConfig(CommonsBaseConfig):
+# class RuntimeConfig(CommonsBaseConfig):
+class RuntimeConfig():
     SQL_SERVER_NAME:str = "172.31.35.44"
     SQL_DATABASE_NAME:str = "BiCustomerMoneyConsept"
     SQL_USERNAME:str = "metis_developer"
