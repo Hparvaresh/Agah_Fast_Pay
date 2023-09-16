@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+import plotly
 import matplotlib.pyplot as plt
 from FPT.vo.pd_mapping_vo import PDMappingVO
 
@@ -17,5 +18,11 @@ def plot_base_date(df : pd.DataFrame) -> None:
 def plot_plotly(df : pd.DataFrame) -> None:
     fig = px.line(df, x="date", y=df.columns)
     fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
-    fig.show()
+    # fig.show()
+    plotly.offline.plot(fig)
+
+def plot_model_predict(df : pd.DataFrame) -> None:
+    fig = px.line(df, x=df.index, y=df.columns)
+    plotly.offline.plot(fig)
+
     

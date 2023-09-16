@@ -16,13 +16,14 @@ class FastPayTrainLogic():
     
     def merge_all_tables_in_one(self):
         merge_df = make_info_table()
-        # scaled_df = standard_df(merge_df)
-        x_train , x_test , y_train , y_test = make_feature_custom(merge_df)
-        decision_tree_regression( x_train, y_train, x_test  , y_test)
-        linear_regression( x_train, y_train, x_test  , y_test)
-        svr( x_train, y_train, x_test  , y_test)
-        random_forest_regression( x_train, y_train, x_test  , y_test)
-        # plot_plotly(scaled_df)
+        (x_train , x_test , y_train , y_test), scaler, real_col_value = make_feature_custom(merge_df)
+        # plot_plotly(merge_df)
+        model = train_model( x_train, y_train, x_test  , y_test)
+        transformed_y_pred, transformed_y_test = predict_model(model,x_test, y_test, scaler, real_col_value)
+        output_df = pd.DataFrame({'predict':transformed_y_pred,
+                                   'real':transformed_y_test})
+
+        plot_model_predict(output_df)
         
 
             

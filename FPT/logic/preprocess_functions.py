@@ -94,11 +94,3 @@ def make_info_table():
     return merge_df
 
 
-def standard_df(df:pd.DataFrame) -> pd.DataFrame:
-        col_to_exclude = df[PDMappingVO.DATE_COLUMN]
-        df = df.drop(PDMappingVO.DATE_COLUMN, axis=1)
-        scaler = StandardScaler()
-        scaled_data = scaler.fit_transform(df)
-        scaled_df = pd.DataFrame(scaled_data, columns=df.columns)
-        scaled_df[PDMappingVO.DATE_COLUMN] = col_to_exclude.values
-        return scaled_df

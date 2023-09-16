@@ -49,9 +49,21 @@ class PDMappingVO():
     IPO_NAME:str = "Name"
     IPO_TICKET:str = 'is_IPO_ticket'
 
-    RATIO:str = "_ratio_"
-    DIVIDE:str = "_divide_"
+    TRAIN_MODEL:str = "train_model"
     COLUMN_NAME:str = "column_name"
-    RATIO_PERIODS:str= "ratio_periods"
-    DIVIDING:str = "dividing"
+    GET_DIVIDE:str = "get_divide"
+    DIVIDE:str = "_divide_"
+    GET_RATIO:str= "get_ratio"
+    RATIO:str = "_ratio_"
+    GET_LOGARITHM:str = "get_logarithm"
+    LOGARITHM:str = "_logarithm_"
+    GET_STANDARD:str = "get_standard"
+    standard:str = "_standard_"
+
+
+    LINEAR_RGRESSION:str = "linear_regression"
+    DECISON_TREE_REGRESSION:str = "decision_tree_regression"
+    SVR:str = "svr"
+    RANDOM_FOREST_REGRESSION:str ="random_forest_regression"
+    INCREASE_FACTOR:str = "increase_factor"
     
