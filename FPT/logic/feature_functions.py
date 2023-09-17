@@ -152,7 +152,15 @@ def make_feature_custom(data_df):
 
     # Remove rows with missing values
     feature_df = feature_df.dropna()
-    # plot_plotly(feature_df[48:])
+    
+    #Plot features with pyplot
+    for feature_item in feature_map:
+        if not PDMappingVO.PLOT_FEATURE in feature_item:
+            continue
+        if (PDMappingVO.PLOT_FEATURE in feature_item
+                and feature_item[PDMappingVO.PLOT_FEATURE] ):
+            plot_plotly(feature_df[48:])
+            
     # Prepare the target and feature lists
     target_list = feature_df[target_column].to_list()
     feature_df = feature_df.drop(columns=[target_column])

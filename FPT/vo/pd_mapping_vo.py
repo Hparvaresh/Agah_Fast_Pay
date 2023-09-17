@@ -57,11 +57,7 @@ class PDMappingVO:
     STANDARD: str = "_standard_"
     GET_SHIFT:str = "get_shift"
     SHIFT:str = "_shift_"
-
-    LINEAR_RGRESSION: str = "linear_regression"
-    DECISON_TREE_REGRESSION: str = "decision_tree_regression"
-    SVR: str = "svr"
-    RANDOM_FOREST_REGRESSION: str = "random_forest_regression"
+    PLOT_FEATURE:str = "plot_feature"
     INCREASE_FACTOR: str = "increase_factor"
     NO_MODEL_ERR: str = "Please provide  a model name"
     NO_TRANSFORM_OBJ: str = "please provide valid transform"

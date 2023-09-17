@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 
 from FPT.vo.pd_mapping_vo import PDMappingVO
+from FPT.vo.models_vo import ModelsVO
 from FPT.vo.feature_mapping import feature_map
 
 
@@ -32,13 +33,13 @@ def train_model(x_train, y_train, x_test, y_test):
     assert train_model_type != "", PDMappingVO.NO_MODEL_ERR
     
     # Initialize the chosen regression model based on the mapping
-    if train_model_type == PDMappingVO.LINEAR_RGRESSION:
+    if train_model_type == ModelsVO.LINEAR_RGRESSION:
         model = LinearRegression()
-    elif train_model_type == PDMappingVO.DECISON_TREE_REGRESSION:
+    elif train_model_type == ModelsVO.DECISON_TREE_REGRESSION:
         model = DecisionTreeRegressor()
-    elif train_model_type == PDMappingVO.SVR:
+    elif train_model_type == ModelsVO.SVR:
         model = SVR()
-    elif train_model_type == PDMappingVO.RANDOM_FOREST_REGRESSION:
+    elif train_model_type == ModelsVO.RANDOM_FOREST_REGRESSION:
         model = RandomForestRegressor()
     else:
         raise ValueError("Invalid model type in feature mapping.")
