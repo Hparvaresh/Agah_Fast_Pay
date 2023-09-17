@@ -14,6 +14,7 @@ from FPT.logic.pandas_functions import manage_money_date, merge_list_of_df
 import pandas as pd
 from persiantools.jdatetime import JalaliDate
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 
 # Function to create an information table by merging various data sources.
@@ -98,13 +99,14 @@ def make_info_table():
         df_payment_fastpay.to_csv(df_payment_fastpay_path)
 
     # Read and merge data, including dollar and index data.
-    merge_df_path = make_table_path(RuntimeConfig.MERGE_TABLE_NAME)
-    merge_df = read_table_from_csv(merge_df_path)
-
+    merged_df_filled_fast_pay_not_0_path = make_table_path(RuntimeConfig.MERGE_DF_FILLED_FAST_PAY_NOT_0)
+    merged_df_filled_fast_pay_not_0 = read_table_from_csv(merged_df_filled_fast_pay_not_0_path)
+    merged_df_filled_fast_pay_is_0_path = make_table_path(RuntimeConfig.MERGE_DF_FILLED_FAST_PAY_IS_0)
+    merged_df_filled_fast_pay_is_0 = read_table_from_csv(merged_df_filled_fast_pay_is_0_path)
     dollar_df = read_dollar()
     index_df = read_index()
-    if merge_df.empty:
-        merge_df = merge_list_of_df(
+    if merged_df_filled_fast_pay_not_0.empty or merged_df_filled_fast_pay_is_0.empty:
+        merged_df_filled_fast_pay_not_0, merged_df_filled_fast_pay_is_0 = merge_list_of_df(
             dfs_list=[
                 payment_df,
                 deposit_df,
@@ -119,20 +121,51 @@ def make_info_table():
             merge_harmony_check_column=PDMappingVO.SUM_HARMONEY_CHECK,
             sum_balance_check=PDMappingVO.SUM_HARMONEY_OUTPUT_NAME,
             sum_balance_harmony=PDMappingVO.SUM_CHECK_OUTPUT_NAME,
+            sum_fast_pay = PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
         )
-        merge_df.to_csv(merge_df_path)
+        merged_df_filled_fast_pay_not_0.to_csv(merged_df_filled_fast_pay_not_0_path)
+        merged_df_filled_fast_pay_is_0.to_csv(merged_df_filled_fast_pay_is_0_path)
 
+    merged_df_filled_fast_pay_not_0 = merged_df_filled_fast_pay_not_0.replace(0, np.nan).dropna()
+    merged_df_filled_fast_pay_is_0 = merged_df_filled_fast_pay_is_0.drop([PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME],axis=1)
+    merged_df_filled_fast_pay_is_0 = merged_df_filled_fast_pay_is_0.replace(0, np.nan).dropna()
     # Read IPO data and merge it with the existing data.
     IPO_df = read_IPO()
-    merge_df = pd.merge(
-        merge_df, IPO_df, on=PDMappingVO.DATE_COLUMN, how=PDMappingVO.HOW_MERGE_LEFT
+    merged_df_filled_fast_pay_not_0 = pd.merge(
+        merged_df_filled_fast_pay_not_0, IPO_df, on=PDMappingVO.DATE_COLUMN, how=PDMappingVO.HOW_MERGE_LEFT
     )
-    merge_df = merge_df.fillna(0)
-    merge_df[PDMappingVO.IPO_TICKET] = [
-        x if x == 0 else 1 for x in merge_df[PDMappingVO.IPO_NAME].to_list()
+    merged_df_filled_fast_pay_not_0 = merged_df_filled_fast_pay_not_0.fillna(0)
+    
+    merged_df_filled_fast_pay_is_0 = pd.merge(
+    merged_df_filled_fast_pay_is_0, IPO_df, on=PDMappingVO.DATE_COLUMN, how=PDMappingVO.HOW_MERGE_LEFT
+    )
+    merged_df_filled_fast_pay_is_0 = merged_df_filled_fast_pay_is_0.fillna(0)
+    ##ADD smothly IPO
+    # ipo_list:list = []
+    # ipo_continous:float = 0
+    # for x in merge_df[PDMappingVO.IPO_NAME].to_list():
+    #     if x== 0:
+    #         ipo_list.append(ipo_continous)
+    #         ipo_continous = 0 if ipo_continous==0 else ipo_continous -0.25
+    #     else:
+    #         ipo_list.append(1)
+    #         ipo_continous = 0.75
+    # merge_df[PDMappingVO.IPO_TICKET] = ipo_list
+    
+
+    merged_df_filled_fast_pay_not_0[PDMappingVO.IPO_TICKET] = [
+        x if x == 0 else 1 for x in merged_df_filled_fast_pay_not_0[PDMappingVO.IPO_NAME].to_list()
     ]
-    merge_df = merge_df.drop(columns=[PDMappingVO.IPO_NAME])
-    merge_df[PDMappingVO.DATE_COLUMN] = merge_df.apply(
+    merged_df_filled_fast_pay_not_0 = merged_df_filled_fast_pay_not_0.drop(columns=[PDMappingVO.IPO_NAME])
+
+    
+    merged_df_filled_fast_pay_is_0[PDMappingVO.IPO_TICKET] = [
+    x if x == 0 else 1 for x in merged_df_filled_fast_pay_is_0[PDMappingVO.IPO_NAME].to_list()
+    ]
+    merged_df_filled_fast_pay_is_0 = merged_df_filled_fast_pay_is_0.drop(columns=[PDMappingVO.IPO_NAME])
+        
+        
+    merged_df_filled_fast_pay_not_0[PDMappingVO.DATE_COLUMN] = merged_df_filled_fast_pay_not_0.apply(
         lambda row: JalaliDate(
             datetime.strptime(
                 row[PDMappingVO.DATE_COLUMN], PDMappingVO.DATE_TIME_FORMAT
@@ -140,4 +173,13 @@ def make_info_table():
         ),
         axis=1,
     )
-    return merge_df
+    merged_df_filled_fast_pay_is_0[PDMappingVO.DATE_COLUMN] = merged_df_filled_fast_pay_is_0.apply(
+        lambda row: JalaliDate(
+            datetime.strptime(
+                row[PDMappingVO.DATE_COLUMN], PDMappingVO.DATE_TIME_FORMAT
+            )
+        ),
+        axis=1,
+    )
+
+    return merged_df_filled_fast_pay_not_0, merged_df_filled_fast_pay_is_0

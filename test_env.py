@@ -10,6 +10,7 @@ class RuntimeConfig():
     LOCAL_DATA_PATH = "local_data"
     
     
-    MERGE_TABLE_NAME:str= "merge_table"
+    MERGE_DF_FILLED_FAST_PAY_NOT_0:str = "merged_df_filled_fast_pay_not_0"
+    MERGE_DF_FILLED_FAST_PAY_IS_0:str = "merged_df_filled_fast_pay_is_0"
     DOLLAR_PATH:str = "Dollar_D.txt"
     INDEX_EXCEL_PATH:str = "metisData.xlsx"

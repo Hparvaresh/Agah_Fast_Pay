@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 from FPT.vo.pd_mapping_vo import PDMappingVO
-from FPT.vo.feature_mapping import feature_map
 from sklearn.preprocessing import StandardScaler
 from FPT.utils.pd_plot import plot_plotly
 
@@ -84,7 +83,7 @@ def logarithm_column(
 
 
 # Main function to create custom features from the data
-def make_feature_custom(data_df):
+def make_feature_custom(data_df, feature_map):
     target_column: str = ""
     scaler_obj = None
 
@@ -153,31 +152,27 @@ def make_feature_custom(data_df):
     # Remove rows with missing values
     feature_df = feature_df.dropna()
     
-    #Plot features with pyplot
-    for feature_item in feature_map:
-        if not PDMappingVO.PLOT_FEATURE in feature_item:
-            continue
-        if (PDMappingVO.PLOT_FEATURE in feature_item
-                and feature_item[PDMappingVO.PLOT_FEATURE] ):
-            plot_plotly(feature_df[48:])
+  
             
     # Prepare the target and feature lists
     target_list = feature_df[target_column].to_list()
     feature_df = feature_df.drop(columns=[target_column])
     real_target: list = []
     if PDMappingVO.REAL_TARGET in feature_df.columns:
-        real_target = feature_df[PDMappingVO.REAL_TARGET].to_list()[48:]
+        real_target = feature_df[PDMappingVO.REAL_TARGET].to_list()[4:]
         feature_df = feature_df.drop(columns=[PDMappingVO.REAL_TARGET])
     feature_list = np.array(feature_df)
-
+    #Plot features with pyplot
+    for feature_item in feature_map:
+        if not PDMappingVO.PLOT_FEATURE in feature_item:
+            continue
+        if (PDMappingVO.PLOT_FEATURE in feature_item
+                and feature_item[PDMappingVO.PLOT_FEATURE] ):
+            plot_plotly(feature_df[5:])
     # Split the data into training and testing sets
     x: list = []
     y: list = []
-    for i in range(48, len(feature_df)):
+    for i in range(5, len(feature_df)):
         y.append(target_list[i])
         x.append(feature_list[i])
-    x_train, x_test, y_train, y_test, real_test_target = split_data(
-        np.array(x), np.array(y), real_target, train_size=70
-    )
-
-    return x_train, x_test, y_train, y_test, real_test_target, scaler_obj
+    return x, y, real_target, scaler_obj

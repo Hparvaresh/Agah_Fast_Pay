@@ -7,10 +7,9 @@ from sklearn.ensemble import RandomForestRegressor
 
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from FPT.vo.models_vo import ModelsVO
-from FPT.vo.feature_mapping import feature_map
 
 
-def train_model(x_train, y_train, x_test, y_test):
+def train_model(x_train, y_train, x_test, y_test, feature_map):
     """
     Train a regression model based on the specified model type in the feature mapping.
     
@@ -55,7 +54,7 @@ def train_model(x_train, y_train, x_test, y_test):
     return model
 
 
-def predict_model(model, x_test, y_test, scaler=None, real_col_value=None):
+def predict_model(model, x_test, y_test, feature_map, scaler=None, real_col_value=None):
     """
     Predict target values using the trained regression model and apply necessary transformations.
     

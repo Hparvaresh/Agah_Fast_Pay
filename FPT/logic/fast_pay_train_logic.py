@@ -1,6 +1,7 @@
 import pandas as pd
 from FPT.logic.preprocess_functions import make_info_table
 from FPT.utils.pd_plot import  plot_plotly, plot_plotly_date
+from FPT.vo.feature_mapping import train_feature_map_ratio, test_feature_map_ratio, train_feature_map_standard, test_feature_map_standard
 from FPT.logic.feature_functions import make_feature_custom
 from FPT.logic.train_functions import train_model, predict_model
 
@@ -16,20 +17,32 @@ class FastPayTrainLogic:
         """
         Merge tables and train a machine learning model.
         """
-        info_table = make_info_table()
+        train_feature_map = train_feature_map_ratio
+        test_feature_map = test_feature_map_ratio
+        
+        # train_feature_map = train_feature_map_standard
+        # test_feature_map = test_feature_map_standard
+        
+        
+        merged_df_filled_fast_pay_not_0, merged_df_filled_fast_pay_is_0 = make_info_table()
         
         (
             x_train,
-            x_test,
             y_train,
+            real_train_target,
+            train_scaler,
+        ) = make_feature_custom(merged_df_filled_fast_pay_is_0, train_feature_map)
+        
+        (
+            x_test,
             y_test,
             real_test_target,
-            scaler,
-        ) = make_feature_custom(info_table)
+            test_scaler,
+        ) = make_feature_custom(merged_df_filled_fast_pay_not_0, test_feature_map)
         
-        model = train_model(x_train, y_train, x_test, y_test)
+        model = train_model(x_train, y_train, x_test, y_test, train_feature_map)
         transformed_y_pred, transformed_y_test = predict_model(
-            model, x_test, y_test, scaler, real_test_target
+            model, x_test, y_test,test_feature_map, test_scaler, real_test_target
         )
 
         output_df = pd.DataFrame(

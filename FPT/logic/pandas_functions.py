@@ -52,17 +52,24 @@ def merge_list_of_df(dfs_list,
                      merge_on_column:str,
                      merge_harmony_check_column:str,
                      sum_balance_check:str, 
-                     sum_balance_harmony:str) -> pd.DataFrame:
+                     sum_balance_harmony:str,
+                     sum_fast_pay:str ) -> pd.DataFrame:
     
     assert len(dfs_list) > 2
     merge_df = dfs_list[0]
     for df in dfs_list[1:]:
         merge_df = pd.merge(merge_df, df , on=merge_on_column, how=PDMappingVO.HOW_MERGE_OUTER)
-    merge_df = merge_df.dropna()
-    merge_df[merge_harmony_check_column] = list(np.array(merge_df[sum_balance_check].to_list()) + np.array(merge_df[sum_balance_harmony].to_list()) )
-    merge_df = merge_df.sort_values(merge_on_column)
-    merge_df = merge_df.reset_index(drop=True)
-    return merge_df
+    merged_df_filled = merge_df.fillna(0)
+    merged_df_filled[merge_harmony_check_column] = list(np.array(merge_df[sum_balance_check].to_list()) + np.array(merge_df[sum_balance_harmony].to_list()) )
+    merged_df_filled = merged_df_filled[merged_df_filled[merge_harmony_check_column] > 0]
+    merged_df_filled_fast_pay_not_0 = merged_df_filled[merged_df_filled[sum_fast_pay] > 0]
+    merged_df_filled_fast_pay_is_0 = merged_df_filled[merged_df_filled[sum_fast_pay] == 0]
+    
+    merged_df_filled_fast_pay_not_0 = merged_df_filled_fast_pay_not_0.sort_values(merge_on_column)
+    merged_df_filled_fast_pay_is_0 = merged_df_filled_fast_pay_is_0.sort_values(merge_on_column)
+
+    # merge_df = merge_df.reset_index(drop=True)
+    return merged_df_filled_fast_pay_not_0, merged_df_filled_fast_pay_is_0
 
 
         
