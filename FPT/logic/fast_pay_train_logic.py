@@ -1,6 +1,6 @@
 import pandas as pd
 from FPT.logic.preprocess_functions import make_info_table
-from FPT.utils.pd_plot import plot_model_predict, plot_plotly
+from FPT.utils.pd_plot import  plot_plotly, plot_plotly_date
 from FPT.logic.feature_functions import make_feature_custom
 from FPT.logic.train_functions import train_model, predict_model
 
@@ -36,7 +36,7 @@ class FastPayTrainLogic:
             {"predict": transformed_y_pred, "real": transformed_y_test}
         )
 
-        plot_model_predict(output_df)
+        plot_plotly(output_df)
 
     def run(self):
         """

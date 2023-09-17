@@ -15,13 +15,13 @@ def plot_base_date(df : pd.DataFrame) -> None:
     plt.xticks(range(0,len(df)+10,5),rotation=90)
     plt.show()
 
-def plot_plotly(df : pd.DataFrame) -> None:
+def plot_plotly_date(df : pd.DataFrame) -> None:
     fig = px.line(df, x="date", y=df.columns)
     fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
     # fig.show()
     plotly.offline.plot(fig)
 
-def plot_model_predict(df : pd.DataFrame) -> None:
+def plot_plotly(df : pd.DataFrame) -> None:
     fig = px.line(df, x=df.index, y=df.columns)
     plotly.offline.plot(fig)
 

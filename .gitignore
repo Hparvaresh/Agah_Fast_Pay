@@ -159,3 +159,4 @@ cython_debug/
 dump.rdb
 *.pickle
 .vscode
+*.html
