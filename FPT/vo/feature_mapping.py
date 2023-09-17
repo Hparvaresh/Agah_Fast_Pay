@@ -55,7 +55,6 @@ feature_map = [
 
     { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
      PDMappingVO.GET_STANDARD: True,
-     PDMappingVO.GET_RATIO:[1,2,3],
         PDMappingVO.GET_SHIFT: [1,2,3],
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,

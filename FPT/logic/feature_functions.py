@@ -175,7 +175,7 @@ def make_feature_custom(data_df):
     y: list = []
     for i in range(48, len(feature_df)):
         y.append(target_list[i])
-        x.append(feature_list[i - 1])
+        x.append(feature_list[i])
     x_train, x_test, y_train, y_test, real_test_target = split_data(
         np.array(x), np.array(y), real_target, train_size=70
     )
