@@ -20,6 +20,7 @@ class PDMappingVO():
     INDEX_INDEX_VALUE:str = "index_value"
     KEEP_COLUMN:str = "keep_column"
     AS_TARGET:str = "as_target"
+    REAL_TARGET:str = "real_target"
 
 
     
@@ -66,4 +67,5 @@ class PDMappingVO():
     SVR:str = "svr"
     RANDOM_FOREST_REGRESSION:str ="random_forest_regression"
     INCREASE_FACTOR:str = "increase_factor"
-    
+    NO_MODEL_ERR:str = "Please provide  a model name"
+    NO_TRANSFORM_OBJ:str = "please provide valid transform"
