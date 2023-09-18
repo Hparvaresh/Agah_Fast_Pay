@@ -59,5 +59,10 @@ class PDMappingVO:
     SHIFT:str = "_shift_"
     PLOT_FEATURE:str = "plot_feature"
     INCREASE_FACTOR: str = "increase_factor"
+    GET_COEF:str = "get_coef"
+    COEF:str = "_coef_"
+    
+    
+    
     NO_MODEL_ERR: str = "Please provide  a model name"
     NO_TRANSFORM_OBJ: str = "please provide valid transform"

@@ -1,12 +1,16 @@
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from FPT.vo.models_vo import ModelsVO
 
+
 train_feature_map_ratio = [
-    { PDMappingVO.TRAIN_MODEL: ModelsVO.SVR
+    { PDMappingVO.TRAIN_MODEL: [ModelsVO.SVR,
+                                ModelsVO.GRADIEN_BOOSTING_REGRESSION, 
+                                ModelsVO.DECISON_TREE_REGRESSION, 
+                                ModelsVO.LINEAR_RGRESSION, 
+                                ModelsVO.RANDOM_FOREST_REGRESSION]
       },
-    { PDMappingVO.INCREASE_FACTOR: 1
-      },
-    { PDMappingVO.PLOT_FEATURE: True
+
+    { PDMappingVO.PLOT_FEATURE: False
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_HARMONEY_CHECK,
         PDMappingVO.GET_RATIO: [1],
@@ -14,9 +18,18 @@ train_feature_map_ratio = [
         PDMappingVO.AS_TARGET : True,
       },
 
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME,
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+    PDMappingVO.GET_SHIFT: [1],
+     },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME,
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+        PDMappingVO.GET_SHIFT: [1],
+        },
+
     { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_HARMONEY_CHECK,
-        PDMappingVO.GET_RATIO: [1],
-        PDMappingVO.GET_SHIFT: [1,2,3],
+        PDMappingVO.GET_RATIO: [1,2,3],
+        PDMappingVO.GET_SHIFT: [1],
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,
         PDMappingVO.GET_RATIO: [1],
@@ -26,14 +39,7 @@ train_feature_map_ratio = [
         PDMappingVO.GET_RATIO: [1],
         PDMappingVO.GET_SHIFT: [1],
       },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME,
-        PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1],
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME,
-    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1],
-        },
+
 
     { PDMappingVO.COLUMN_NAME: PDMappingVO.IPO_TICKET,
     PDMappingVO.KEEP_COLUMN : True
@@ -41,114 +47,121 @@ train_feature_map_ratio = [
 ]
 
 test_feature_map_ratio= [
-    { PDMappingVO.TRAIN_MODEL: ModelsVO.SVR
+    { PDMappingVO.INCREASE_FACTOR: 1.7
       },
-    { PDMappingVO.INCREASE_FACTOR: 1.5
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
-        PDMappingVO.GET_RATIO: [1],
-        PDMappingVO.GET_SHIFT: [0],
-        PDMappingVO.AS_TARGET : True,
-      },
-
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
-        PDMappingVO.GET_RATIO: [1],
-        PDMappingVO.GET_SHIFT: [1,2,3],
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,
-        PDMappingVO.GET_RATIO: [1],
-        PDMappingVO.GET_SHIFT: [1],
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.INDEX_INDEX_VALUE,
-        PDMappingVO.GET_RATIO: [1],
-        PDMappingVO.GET_SHIFT: [1],
+        { PDMappingVO.PLOT_FEATURE: False
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME,
-        PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1],
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+    PDMappingVO.GET_SHIFT: [1],
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME,
     PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
         PDMappingVO.GET_SHIFT: [1],
         },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [0],
+        PDMappingVO.AS_TARGET : True,
+      },
+
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
+        PDMappingVO.GET_RATIO: [1,2,3],
+        PDMappingVO.GET_SHIFT: [1],
+      },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [1],
+      },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.INDEX_INDEX_VALUE,
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [1],
+      },
+
 
     { PDMappingVO.COLUMN_NAME: PDMappingVO.IPO_TICKET,
     PDMappingVO.KEEP_COLUMN : True
         },
 ]
 
-train_feature_map_standard = [
-    { PDMappingVO.TRAIN_MODEL: ModelsVO.LINEAR_RGRESSION
-      },
-    { PDMappingVO.INCREASE_FACTOR: 1
-      },
-    { PDMappingVO.PLOT_FEATURE: True
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_HARMONEY_CHECK,
-        PDMappingVO.GET_STANDARD: True,
-        PDMappingVO.AS_TARGET : True,
-        PDMappingVO.GET_SHIFT: [0],
+train_feature_map_custom = [
+    { PDMappingVO.TRAIN_MODEL: [ModelsVO.SVR,
+                                ModelsVO.GRADIEN_BOOSTING_REGRESSION, 
+                                ModelsVO.DECISON_TREE_REGRESSION, 
+                                ModelsVO.LINEAR_RGRESSION, 
+                                ModelsVO.RANDOM_FOREST_REGRESSION]
       },
 
+    { PDMappingVO.PLOT_FEATURE: False
+      },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_HARMONEY_CHECK,
-     PDMappingVO.GET_STANDARD: True,
-        PDMappingVO.GET_SHIFT: [1,2,3],
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [0],
+        PDMappingVO.AS_TARGET : True,
+      },
+
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME,
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+    PDMappingVO.GET_SHIFT: [1],
+     },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME,
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+        PDMappingVO.GET_SHIFT: [1],
+        },
+
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_HARMONEY_CHECK,
+        PDMappingVO.GET_RATIO: [1,2,3],
+        PDMappingVO.GET_SHIFT: [1],
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,
-        PDMappingVO.GET_STANDARD: True,
-        PDMappingVO.GET_SHIFT: [1,2,3],
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [1],
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.INDEX_INDEX_VALUE,
-       PDMappingVO.GET_STANDARD: True,
-       PDMappingVO.GET_SHIFT: [1,2,3],
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [1],
       },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME,
-        PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1,2,3],
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME,
-        PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1,2,3],
-        },
+
 
     { PDMappingVO.COLUMN_NAME: PDMappingVO.IPO_TICKET,
     PDMappingVO.KEEP_COLUMN : True
         },
 ]
 
-test_feature_map_standard = [
-    { PDMappingVO.TRAIN_MODEL: ModelsVO.LINEAR_RGRESSION
+test_feature_map_custom= [
+    { PDMappingVO.INCREASE_FACTOR: 1.7
       },
-    { PDMappingVO.INCREASE_FACTOR: 1
-      },
-    { PDMappingVO.PLOT_FEATURE: True
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
-        PDMappingVO.GET_STANDARD: True,
-        PDMappingVO.AS_TARGET : True,
-        PDMappingVO.GET_SHIFT: [0],
+        { PDMappingVO.PLOT_FEATURE: False
       },
 
     { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
-     PDMappingVO.GET_STANDARD: True,
-        PDMappingVO.GET_SHIFT: [1,2,3],
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [0],
+        PDMappingVO.AS_TARGET : True,
       },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,
-        PDMappingVO.GET_STANDARD: True,
-        PDMappingVO.GET_SHIFT: [1,2,3],
-      },
-    { PDMappingVO.COLUMN_NAME: PDMappingVO.INDEX_INDEX_VALUE,
-       PDMappingVO.GET_STANDARD: True,
-       PDMappingVO.GET_SHIFT: [1,2,3],
-      },
+
+        
     { PDMappingVO.COLUMN_NAME: PDMappingVO.DEPOSIT_MONEY_OUTPUT_NAME,
-        PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1,2,3],
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+    PDMappingVO.GET_SHIFT: [1],
       },
     { PDMappingVO.COLUMN_NAME: PDMappingVO.PAYMENT_MONEY_OUTPUT_NAME,
-        PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
-        PDMappingVO.GET_SHIFT: [1,2,3],
+    PDMappingVO.GET_DIVIDE: [PDMappingVO.BALANCE_MONEY_OUTPUT_NAME],
+        PDMappingVO.GET_SHIFT: [1],
         },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.SUM_FAST_PAY_OUTPUT_NAME,
+        PDMappingVO.GET_RATIO: [1,2,3],
+        PDMappingVO.GET_SHIFT: [1],
+      },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.DOLLAR_VALUE,
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [1],
+      },
+    { PDMappingVO.COLUMN_NAME: PDMappingVO.INDEX_INDEX_VALUE,
+        PDMappingVO.GET_RATIO: [1],
+        PDMappingVO.GET_SHIFT: [1],
+      },
+
 
     { PDMappingVO.COLUMN_NAME: PDMappingVO.IPO_TICKET,
     PDMappingVO.KEEP_COLUMN : True

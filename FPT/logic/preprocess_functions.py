@@ -12,7 +12,7 @@ from test_env import RuntimeConfig
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from FPT.logic.pandas_functions import manage_money_date, merge_list_of_df
 import pandas as pd
-from persiantools.jdatetime import JalaliDate
+# from persiantools.jdatetime import JalaliDate
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
@@ -165,21 +165,21 @@ def make_info_table():
     merged_df_filled_fast_pay_is_0 = merged_df_filled_fast_pay_is_0.drop(columns=[PDMappingVO.IPO_NAME])
         
         
-    merged_df_filled_fast_pay_not_0[PDMappingVO.DATE_COLUMN] = merged_df_filled_fast_pay_not_0.apply(
-        lambda row: JalaliDate(
-            datetime.strptime(
-                row[PDMappingVO.DATE_COLUMN], PDMappingVO.DATE_TIME_FORMAT
-            )
-        ),
-        axis=1,
-    )
-    merged_df_filled_fast_pay_is_0[PDMappingVO.DATE_COLUMN] = merged_df_filled_fast_pay_is_0.apply(
-        lambda row: JalaliDate(
-            datetime.strptime(
-                row[PDMappingVO.DATE_COLUMN], PDMappingVO.DATE_TIME_FORMAT
-            )
-        ),
-        axis=1,
-    )
+    # merged_df_filled_fast_pay_not_0[PDMappingVO.DATE_COLUMN] = merged_df_filled_fast_pay_not_0.apply(
+    #     lambda row: JalaliDate(
+    #         datetime.strptime(
+    #             row[PDMappingVO.DATE_COLUMN], PDMappingVO.DATE_TIME_FORMAT
+    #         )
+    #     ),
+    #     axis=1,
+    # )
+    # merged_df_filled_fast_pay_is_0[PDMappingVO.DATE_COLUMN] = merged_df_filled_fast_pay_is_0.apply(
+    #     lambda row: JalaliDate(
+    #         datetime.strptime(
+    #             row[PDMappingVO.DATE_COLUMN], PDMappingVO.DATE_TIME_FORMAT
+    #         )
+    #     ),
+    #     axis=1,
+    # )
 
     return merged_df_filled_fast_pay_not_0, merged_df_filled_fast_pay_is_0

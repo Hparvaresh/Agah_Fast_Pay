@@ -1,9 +1,11 @@
 # Import necessary libraries
 import numpy as np
 import pandas as pd
+import math
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from sklearn.preprocessing import StandardScaler
-from FPT.utils.pd_plot import plot_plotly
+from sklearn.linear_model import LinearRegression
+from FPT.utils.pd_plot import plot_plotly, plot_plotly_date
 
 
 # Function to split data into training and testing sets
@@ -32,12 +34,34 @@ def ratio_to_prev(
     assert period > 0
     assert shift >= 0
     new_column_name = column_name + PDMappingVO.RATIO + str(period) + PDMappingVO.SHIFT + str(shift)
-
-    feature_df[new_column_name] = data_df[column_name].pct_change(periods=period)
+    ratio_list:list = [None]
+    for i in range(1,len(data_df)):
+        ratio_list.append((data_df[column_name][i]-data_df[column_name][i-1] )/ data_df[column_name][i-1])
+    feature_df[new_column_name] = ratio_list
+    # feature_df[new_column_name] = data_df[column_name].pct_change(periods=period)
     feature_df[new_column_name] = feature_df[new_column_name].shift(shift)
     return feature_df, new_column_name
 
 
+def get_coef_windows(data_df: pd.DataFrame,
+    feature_df: pd.DataFrame,
+    column_name: str,
+    window:int = 5,
+    shift: int = 0,):
+    new_column_name = column_name + PDMappingVO.COEF + PDMappingVO.SHIFT + str(shift)
+    data_list = data_df[column_name]
+    data_list = data_list
+    coef_list:list = [None for i in range(window)]
+    for i in range(window, len(data_list)):
+        x = np.array([i for i in range(window)])
+        y = data_list[i- window:i].values.reshape(-1, 1)
+        s,i  = np.polyfit(x, y, 1)
+        atan = math.atan(s)
+        coef_list.append(atan)
+    feature_df[new_column_name] = coef_list
+    feature_df[new_column_name] = feature_df[new_column_name].shift(shift)
+    return feature_df, new_column_name
+        
 # Function to divide two columns
 def dividing_two_column(
     data_df: pd.DataFrame,
@@ -47,9 +71,14 @@ def dividing_two_column(
     shift:int = 1
 ):
     new_column_name = column1_name + PDMappingVO.DIVIDE + column2_name + PDMappingVO.SHIFT + str(shift)
-    feature_df[new_column_name] = data_df[[column1_name]].div(
-        data_df[column2_name], axis=0
-    )
+    div_list:list = []
+    for i in range(len(data_df)):
+        div_list.append(data_df[column1_name][i]/data_df[column2_name][i])
+        
+    feature_df[new_column_name] = div_list
+    # feature_df[new_column_name] = data_df[[column1_name]].div(
+    #     data_df[column2_name], axis=0
+    # )
     feature_df[new_column_name] = feature_df[new_column_name].shift(shift)
     return feature_df, new_column_name
 
@@ -106,6 +135,14 @@ def make_feature_custom(data_df, feature_map):
                     )
                     new_real_col_flag = True
 
+        if PDMappingVO.GET_COEF in feature_item:
+            for window in feature_item[PDMappingVO.GET_COEF ]:
+                for shift in feature_item[PDMappingVO.GET_SHIFT]:
+                    feature_df, new_column_name = get_coef_windows(data_df,
+                                                                            feature_df,
+                                                                            column_name,
+                                                                            window,
+                                                                            shift)
         # Check if the feature should include divided values
         if PDMappingVO.GET_DIVIDE in feature_item:
             for divide_column in feature_item[PDMappingVO.GET_DIVIDE]:
@@ -152,6 +189,20 @@ def make_feature_custom(data_df, feature_map):
     # Remove rows with missing values
     feature_df = feature_df.dropna()
     
+    #Plot features with pyplot
+    for feature_item in feature_map:
+        if not PDMappingVO.PLOT_FEATURE in feature_item:
+            continue
+        if (PDMappingVO.PLOT_FEATURE in feature_item
+                and feature_item[PDMappingVO.PLOT_FEATURE] ):
+            cols = data_df.columns.difference(['date'])
+            sc = StandardScaler()
+            df = pd.DataFrame()
+            df[cols] = sc.fit_transform(data_df[cols])
+            df['date'] = data_df['date']
+            plot_plotly_date(df[5:], "standard data")
+            plot_plotly_date(data_df[5:], "real data")
+            plot_plotly(feature_df[5:], "features")
   
             
     # Prepare the target and feature lists
@@ -162,13 +213,7 @@ def make_feature_custom(data_df, feature_map):
         real_target = feature_df[PDMappingVO.REAL_TARGET].to_list()[4:]
         feature_df = feature_df.drop(columns=[PDMappingVO.REAL_TARGET])
     feature_list = np.array(feature_df)
-    #Plot features with pyplot
-    for feature_item in feature_map:
-        if not PDMappingVO.PLOT_FEATURE in feature_item:
-            continue
-        if (PDMappingVO.PLOT_FEATURE in feature_item
-                and feature_item[PDMappingVO.PLOT_FEATURE] ):
-            plot_plotly(feature_df[5:])
+
     # Split the data into training and testing sets
     x: list = []
     y: list = []
