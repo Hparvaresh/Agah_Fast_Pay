@@ -34,11 +34,11 @@ def ratio_to_prev(
     assert period > 0
     assert shift >= 0
     new_column_name = column_name + PDMappingVO.RATIO + str(period) + PDMappingVO.SHIFT + str(shift)
-    ratio_list:list = [None]
-    for i in range(1,len(data_df)):
-        ratio_list.append((data_df[column_name][i]-data_df[column_name][i-1] )/ data_df[column_name][i-1])
-    feature_df[new_column_name] = ratio_list
-    # feature_df[new_column_name] = data_df[column_name].pct_change(periods=period)
+    # ratio_list:list = [None]
+    # for i in range(1,len(data_df)):
+    #     ratio_list.append((data_df[column_name][i]-data_df[column_name][i-1] )/ data_df[column_name][i-1])
+    # feature_df[new_column_name] = ratio_list
+    feature_df[new_column_name] = data_df[column_name].pct_change(periods=period)
     feature_df[new_column_name] = feature_df[new_column_name].shift(shift)
     return feature_df, new_column_name
 
@@ -71,14 +71,14 @@ def dividing_two_column(
     shift:int = 1
 ):
     new_column_name = column1_name + PDMappingVO.DIVIDE + column2_name + PDMappingVO.SHIFT + str(shift)
-    div_list:list = []
-    for i in range(len(data_df)):
-        div_list.append(data_df[column1_name][i]/data_df[column2_name][i])
+    # div_list:list = []
+    # for i in range(len(data_df)):
+    #     div_list.append(data_df[column1_name][i]/data_df[column2_name][i])
         
-    feature_df[new_column_name] = div_list
-    # feature_df[new_column_name] = data_df[[column1_name]].div(
-    #     data_df[column2_name], axis=0
-    # )
+    # feature_df[new_column_name] = div_list
+    feature_df[new_column_name] = data_df[[column1_name]].div(
+        data_df[column2_name], axis=0
+    )
     feature_df[new_column_name] = feature_df[new_column_name].shift(shift)
     return feature_df, new_column_name
 

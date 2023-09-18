@@ -1,13 +1,52 @@
 import numpy as np
-from sklearn.svm import SVR
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_absolute_error
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+
 
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from FPT.vo.models_vo import ModelsVO
 
+
+# Linear Models
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, SGDRegressor
+
+# Support Vector Machines
+from sklearn.svm import SVR
+
+# Nearest Neighbors
+from sklearn.neighbors import KNeighborsRegressor
+
+# Tree-Based Models
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor
+
+# Kernel Ridge Regression
+from sklearn.kernel_ridge import KernelRidge
+
+# Neural Network-Based Models
+from sklearn.neural_network import MLPRegressor
+
+# Ensemble Methods
+from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor
+
+# Gaussian Processes
+from sklearn.gaussian_process import GaussianProcessRegressor
+
+
+# RANSAC Regressor
+from sklearn.linear_model import RANSACRegressor
+
+
+# # Huber Regressor
+# from sklearn.linear_model import HuberRegressor
+
+# # Passive Aggressive Regressor
+# from sklearn.linear_model import PassiveAggressiveRegressor
+
+# # Isotonic Regression
+# from sklearn.isotonic import IsotonicRegression
+
+# # Tweedie Regressor
+# from sklearn.linear_model import TweedieRegressor
 
 def train_model(x_train, y_train, x_test, y_test, feature_map):
     """
@@ -42,6 +81,32 @@ def train_model(x_train, y_train, x_test, y_test, feature_map):
             model = SVR()
         elif train_model_type == ModelsVO.RANDOM_FOREST_REGRESSION:
             model = RandomForestRegressor()
+        elif train_model_type == ModelsVO.GRADIEN_BOOSTING_REGRESSION:
+            model = GradientBoostingRegressor()    
+        elif train_model_type == ModelsVO.RIDGE:
+            model = Ridge()    
+        elif train_model_type == ModelsVO.LASSO:
+            model = Lasso()    
+        elif train_model_type == ModelsVO.ELASTIC_NET:
+            model = ElasticNet()    
+        elif train_model_type == ModelsVO.SGD_REGRESSION:
+            model = SGDRegressor()    
+        elif train_model_type == ModelsVO.K_NEIGHBORS_REGRESSION:
+            model = KNeighborsRegressor()    
+        elif train_model_type == ModelsVO.KERNEL_RIDGE:
+            model = KernelRidge()    
+        elif train_model_type == ModelsVO.EXTRACT_TREES_REGRESSOR:
+            model = ExtraTreesRegressor()    
+        elif train_model_type == ModelsVO.MLP_REGRESSOR:
+            model = MLPRegressor()    
+        elif train_model_type == ModelsVO.ADA_BOOST_REGRESSOR:
+            model = AdaBoostRegressor()    
+        elif train_model_type == ModelsVO.BIGGINING_REGRESSOR:
+            model = BaggingRegressor()    
+        elif train_model_type == ModelsVO.GAUSSIAN_PROCESS_REGRESSOR:
+            model = GaussianProcessRegressor()    
+        elif train_model_type == ModelsVO.RANSAC_REGRESSOR:
+            model = RANSACRegressor()     
         elif train_model_type == ModelsVO.GRADIEN_BOOSTING_REGRESSION:
             model = GradientBoostingRegressor()    
         else:
