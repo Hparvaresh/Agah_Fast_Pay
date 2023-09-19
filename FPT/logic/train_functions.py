@@ -1,10 +1,13 @@
 import numpy as np
+import sys
 from sklearn.metrics import mean_absolute_error
 
 
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from FPT.vo.models_vo import ModelsVO
-
+import torch
+from torch.autograd import Variable
+from FPT.logic.simple_lstm import LSTMModel, train_lstm_model
 
 # Linear Models
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, SGDRegressor
@@ -108,7 +111,15 @@ def train_model(x_train, y_train, x_test, y_test, feature_map):
         elif train_model_type == ModelsVO.RANSAC_REGRESSOR:
             model = RANSACRegressor()     
         elif train_model_type == ModelsVO.GRADIEN_BOOSTING_REGRESSION:
-            model = GradientBoostingRegressor()    
+            model = GradientBoostingRegressor()  
+        elif train_model_type == ModelsVO.COSTUM_LSTM_MODEL:
+            lstm_model = LSTMModel(len(x_test[0]))
+            x_test = Variable(torch.Tensor(x_test).float())
+            y_test = Variable(torch.Tensor(y_test).float())
+            x_train = Variable(torch.Tensor(x_train).float())
+            y_train = Variable(torch.Tensor(y_train).float())
+            lstm_model = train_lstm_model(lstm_model, x_test, y_test, x_train, y_train)
+            return lstm_model   
         else:
             raise ValueError("Invalid model type in feature mapping.")
         
@@ -147,28 +158,37 @@ def predict_model(model, x_test, y_test, feature_map, scaler=None, real_col_valu
     for feature_item in feature_map:
         if PDMappingVO.INCREASE_FACTOR in feature_item:
             increase_factor = feature_item[PDMappingVO.INCREASE_FACTOR]
+    if isinstance(model,LSTMModel):
+        a = torch.Tensor(x_test).float()
+        x_test_input = Variable(torch.Tensor(x_test).float())
+        y_pred = model.predict(x_test_input)
+        y_pred = [x[0] for x in y_pred.tolist()]
+    else:
+        y_pred = model.predict(x_test)
 
-    # Make predictions using the model
-    y_pred = model.predict(x_test)
 
     # Apply transformations based on the provided parameters
-    if real_col_value:
-        transformed_y_pred = (y_pred * np.array(real_col_value[:-1])) + np.array(
-            real_col_value[:-1]
-        )
-        transformed_y_test = (y_test * np.array(real_col_value[:-1])) + np.array(
-            real_col_value[:-1]
-        )
-        transformed_y_pred = [x * increase_factor for x in transformed_y_pred]
+    # if real_col_value:
+        
+    #     transformed_y_test = (y_test * np.array(real_col_value[:-1])) + np.array(
+    #         real_col_value[:-1]
+    #     )
+    #     transformed_y_pred = (y_pred * np.array(real_col_value[:-1])) + np.array(
+    #         real_col_value[:-1]
+    #     )
+    #     transformed_y_pred = [x * increase_factor for x in transformed_y_pred]
 
-    elif scaler:
-        transformed_y_pred = scaler.inverse_transform([y_pred])
-        transformed_y_test = scaler.inverse_transform([y_test])
-        transformed_y_pred = [x * increase_factor for x in transformed_y_pred[0]]
-        transformed_y_test = transformed_y_test[0]
-    else:
+    # elif scaler:
+    #     transformed_y_pred = scaler.inverse_transform([y_pred])
+    #     transformed_y_test = scaler.inverse_transform([y_test])
+    #     transformed_y_pred = [x * increase_factor for x in transformed_y_pred[0]]
+    #     transformed_y_test = transformed_y_test[0]
+    # else:
+    if not isinstance(y_pred, list):
         transformed_y_pred = y_pred.tolist()
-        transformed_y_test =y_test
+    else :
+        transformed_y_pred = y_pred
+    transformed_y_test =y_test
         
     
     return transformed_y_pred, transformed_y_test

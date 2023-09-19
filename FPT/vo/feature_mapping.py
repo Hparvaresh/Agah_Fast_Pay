@@ -85,24 +85,25 @@ test_feature_map_ratio= [
 ]
 
 # ModelsVO.GRADIEN_BOOSTING_REGRESSION, 
-#                                 ModelsVO.DECISON_TREE_REGRESSION, 
-#                                 ModelsVO.LINEAR_RGRESSION, 
-#                                 ModelsVO.RANDOM_FOREST_REGRESSION,
-#                                 ModelsVO.RIDGE,
-#                                 ModelsVO.LASSO,
-#                                 ModelsVO.ELASTIC_NET,
-#                                 ModelsVO.SGD_REGRESSION,
-#                                 ModelsVO.K_NEIGHBORS_REGRESSION,
-#                                 ModelsVO.EXTRACT_TREES_REGRESSOR,
-#                                 ModelsVO.KERNEL_RIDGE,
-#                                 ModelsVO.MLP_REGRESSOR,
-#                                 ModelsVO.ADA_BOOST_REGRESSOR,
-#                                 ModelsVO.BIGGINING_REGRESSOR,
-#                                 ModelsVO.GAUSSIAN_PROCESS_REGRESSOR,
-#                                 ModelsVO.RANSAC_REGRESSOR,
+# ModelsVO.DECISON_TREE_REGRESSION, 
+# ModelsVO.LINEAR_RGRESSION, 
+# ModelsVO.RANDOM_FOREST_REGRESSION,
+# ModelsVO.RIDGE,
+# ModelsVO.LASSO,
+# ModelsVO.ELASTIC_NET,
+# ModelsVO.SGD_REGRESSION,
+# ModelsVO.K_NEIGHBORS_REGRESSION,
+# ModelsVO.EXTRACT_TREES_REGRESSOR,
+# ModelsVO.KERNEL_RIDGE,
+# ModelsVO.MLP_REGRESSOR,
+# ModelsVO.ADA_BOOST_REGRESSOR,
+# ModelsVO.BIGGINING_REGRESSOR,
+# ModelsVO.GAUSSIAN_PROCESS_REGRESSOR,
+# ModelsVO.RANSAC_REGRESSOR,
+# ModelsVO.COSTUM_LSTM_MODEL,
                                 
 train_feature_map_custom = [
-    { PDMappingVO.TRAIN_MODEL: [ModelsVO.SVR,
+    { PDMappingVO.TRAIN_MODEL: [ ModelsVO.SVR
                                 ]
       },
 
@@ -143,7 +144,7 @@ train_feature_map_custom = [
 ]
 
 test_feature_map_custom= [
-    { PDMappingVO.INCREASE_FACTOR: 1.8
+    { PDMappingVO.INCREASE_FACTOR: 1
       },
         { PDMappingVO.PLOT_FEATURE: False
       },

@@ -45,7 +45,7 @@ class FastPayTrainLogic:
             model, x_test, y_test,test_feature_map, test_scaler, real_test_target
         )
         output_df = pd.DataFrame(
-            {"predict": transformed_y_pred, "real": transformed_y_test, "double" : transformed_y_test*2}
+            {"predict": transformed_y_pred, "real": transformed_y_test}
         )
 
         plot_plotly(output_df, "predict_output")

@@ -17,3 +17,4 @@ class ModelsVO:
     BIGGINING_REGRESSOR:str = "biggining_regressor"
     GAUSSIAN_PROCESS_REGRESSOR:str = "gaussian_process_regressor"
     RANSAC_REGRESSOR:str = "rnsac_regressor"
+    COSTUM_LSTM_MODEL:str = "costum_lstm_model"
