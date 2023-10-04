@@ -43,6 +43,23 @@ def ratio_to_prev(
     return feature_df, new_column_name
 
 
+def classify_to_prev(
+    data_df: pd.DataFrame,
+    feature_df: pd.DataFrame,
+    column_name: str,
+    lower_upper: list = [-0.25, 0.25],
+    shift: int = 0,
+):
+    
+    assert shift >= 0
+    new_column_name = column_name + PDMappingVO.CLASSIFY + PDMappingVO.SHIFT + str(shift)
+    ratio_list:list = [None]
+    for i in range(1,len(data_df)):
+        ratio_list.append(2 if ((data_df[column_name][i]-data_df[column_name][i-1] )/ data_df[column_name][i-1]) > lower_upper[1] else 1 if ((data_df[column_name][i]-data_df[column_name][i-1] )/ data_df[column_name][i-1]) < lower_upper[0] else 0)
+    feature_df[new_column_name] = ratio_list
+    feature_df[new_column_name] = feature_df[new_column_name].shift(shift)
+    return feature_df, new_column_name
+
 def get_coef_windows(data_df: pd.DataFrame,
     feature_df: pd.DataFrame,
     column_name: str,
@@ -135,6 +152,12 @@ def make_feature_custom(data_df, feature_map):
                     )
                     new_real_col_flag = True
 
+        if PDMappingVO.GET_CLASSIFY in feature_item:
+            for shift in feature_item[PDMappingVO.GET_SHIFT]:
+                feature_df, new_column_name = classify_to_prev(
+                    data_df, feature_df, column_name, feature_item[PDMappingVO.GET_CLASSIFY], shift
+                )
+                new_real_col_flag = True
         if PDMappingVO.GET_COEF in feature_item:
             for window in feature_item[PDMappingVO.GET_COEF ]:
                 for shift in feature_item[PDMappingVO.GET_SHIFT]:

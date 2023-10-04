@@ -5,16 +5,14 @@ from sklearn.metrics import mean_absolute_error
 
 from FPT.vo.pd_mapping_vo import PDMappingVO
 from FPT.vo.models_vo import ModelsVO
-import torch
-from torch.autograd import Variable
-from FPT.logic.simple_lstm import LSTMModel, train_lstm_model
+# import torch
+# from torch.autograd import Variable
 
 # Linear Models
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, SGDRegressor
 
 # Support Vector Machines
 from sklearn.svm import SVR
-
 # Nearest Neighbors
 from sklearn.neighbors import KNeighborsRegressor
 
@@ -38,32 +36,12 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 # RANSAC Regressor
 from sklearn.linear_model import RANSACRegressor
 
+#classifier
+from sklearn.svm import SVC
+from xgboost.sklearn import XGBClassifier
 
-# # Huber Regressor
-# from sklearn.linear_model import HuberRegressor
-
-# # Passive Aggressive Regressor
-# from sklearn.linear_model import PassiveAggressiveRegressor
-
-# # Isotonic Regression
-# from sklearn.isotonic import IsotonicRegression
-
-# # Tweedie Regressor
-# from sklearn.linear_model import TweedieRegressor
 
 def train_model(x_train, y_train, x_test, y_test, feature_map):
-    """
-    Train a regression model based on the specified model type in the feature mapping.
-    
-    Args:
-        x_train (numpy.ndarray): Training feature data.
-        y_train (numpy.ndarray): Training target data.
-        x_test (numpy.ndarray): Testing feature data.
-        y_test (numpy.ndarray): Testing target data.
-    
-    Returns:
-        sklearn.base.BaseEstimator: Trained regression model.
-    """
     train_model_list = ""
     
     # Find the desired model type in the feature mapping
@@ -112,14 +90,12 @@ def train_model(x_train, y_train, x_test, y_test, feature_map):
             model = RANSACRegressor()     
         elif train_model_type == ModelsVO.GRADIEN_BOOSTING_REGRESSION:
             model = GradientBoostingRegressor()  
-        elif train_model_type == ModelsVO.COSTUM_LSTM_MODEL:
-            lstm_model = LSTMModel(len(x_test[0]))
-            x_test = Variable(torch.Tensor(x_test).float())
-            y_test = Variable(torch.Tensor(y_test).float())
-            x_train = Variable(torch.Tensor(x_train).float())
-            y_train = Variable(torch.Tensor(y_train).float())
-            lstm_model = train_lstm_model(lstm_model, x_test, y_test, x_train, y_train)
-            return lstm_model   
+            
+        ####start classifiers
+        elif train_model_type == ModelsVO.SVC:
+            model = SVC()
+        elif train_model_type == ModelsVO.XGB_CLASSIFIER:
+            model = XGBClassifier()
         else:
             raise ValueError("Invalid model type in feature mapping.")
         
@@ -138,57 +114,50 @@ def train_model(x_train, y_train, x_test, y_test, feature_map):
 
 
 def predict_model(model, x_test, y_test, feature_map, scaler=None, real_col_value=None):
-    """
-    Predict target values using the trained regression model and apply necessary transformations.
-    
-    Args:
-        model (sklearn.base.BaseEstimator): Trained regression model.
-        x_test (numpy.ndarray): Testing feature data.
-        y_test (numpy.ndarray): Testing target data.
-        scaler (sklearn.preprocessing.StandardScaler, optional): Scaler for inverse transformations.
-        real_col_value (list, optional): Real column values for additional transformations.
-    
-    Returns:
-        list: Transformed predicted target values.
-        numpy.ndarray: Transformed true target values.
-    """
-    increase_factor = 1
+
     x_test, y_test, real_col_value =  x_test[55:], y_test[55:], real_col_value[55:]
     # Find the increase factor in the feature mapping
-    for feature_item in feature_map:
-        if PDMappingVO.INCREASE_FACTOR in feature_item:
-            increase_factor = feature_item[PDMappingVO.INCREASE_FACTOR]
-    if isinstance(model,LSTMModel):
-        a = torch.Tensor(x_test).float()
-        x_test_input = Variable(torch.Tensor(x_test).float())
-        y_pred = model.predict(x_test_input)
-        y_pred = [x[0] for x in y_pred.tolist()]
-    else:
-        y_pred = model.predict(x_test)
-
-
-    # Apply transformations based on the provided parameters
-    # if real_col_value:
-        
-    #     transformed_y_test = (y_test * np.array(real_col_value[:-1])) + np.array(
-    #         real_col_value[:-1]
-    #     )
-    #     transformed_y_pred = (y_pred * np.array(real_col_value[:-1])) + np.array(
-    #         real_col_value[:-1]
-    #     )
-    #     transformed_y_pred = [x * increase_factor for x in transformed_y_pred]
-
-    # elif scaler:
-    #     transformed_y_pred = scaler.inverse_transform([y_pred])
-    #     transformed_y_test = scaler.inverse_transform([y_test])
-    #     transformed_y_pred = [x * increase_factor for x in transformed_y_pred[0]]
-    #     transformed_y_test = transformed_y_test[0]
-    # else:
+    y_pred = model.predict(x_test)
+    model_type:str =""
+    for item  in feature_map:
+        if not PDMappingVO.TYPE in item:
+            continue
+        if item[PDMappingVO.TYPE] == PDMappingVO.CLASSIFICATION:
+            model_type = PDMappingVO.CLASSIFICATION
+        elif item[PDMappingVO.TYPE] == PDMappingVO.REGRESSION:
+            model_type = PDMappingVO.REGRESSION
+        else :
+            raise ValueError(PDMappingVO.NO_MODEL_TYPE)
+            
     if not isinstance(y_pred, list):
         transformed_y_pred = y_pred.tolist()
     else :
         transformed_y_pred = y_pred
-    transformed_y_test =y_test
-        
+    if model_type == PDMappingVO.REGRESSION:
+        if real_col_value:
+            transformed_y_pred = (y_pred * np.array(real_col_value[:-1])) + np.array(
+                real_col_value[:-1]
+            )
+            transformed_y_test = (y_test * np.array(real_col_value[:-1])) + np.array(
+                real_col_value[:-1]
+            )
+
+        elif scaler:
+            transformed_y_pred = scaler.inverse_transform([y_pred])
+            transformed_y_test = scaler.inverse_transform([y_test])
+            transformed_y_test = transformed_y_test[0]
+        else:
+            raise ValueError(PDMappingVO.NO_TRANSFORM_OBJ)
+    if model_type == PDMappingVO.CLASSIFICATION:
+        if real_col_value:
+            multi_pred = [0 if x == 0 else -0.2 if x==1 else 0.7 for x in y_pred]
+            
+            transformed_y_pred = (multi_pred * np.array(real_col_value[:-1])) + np.array(
+                real_col_value[:-1]
+            )
+            
+            transformed_y_test = (y_test * np.array(real_col_value[:-1])) + np.array(
+                real_col_value[:-1]
+            )        
     
     return transformed_y_pred, transformed_y_test

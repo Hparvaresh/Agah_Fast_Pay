@@ -18,3 +18,7 @@ class ModelsVO:
     GAUSSIAN_PROCESS_REGRESSOR:str = "gaussian_process_regressor"
     RANSAC_REGRESSOR:str = "rnsac_regressor"
     COSTUM_LSTM_MODEL:str = "costum_lstm_model"
+    
+    
+    SVC:str = "svc"
+    XGB_CLASSIFIER:str = "xgb_classifier"

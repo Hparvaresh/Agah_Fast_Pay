@@ -4,6 +4,8 @@ from FPT.utils.pd_plot import  plot_plotly, plot_plotly_date
 from FPT.vo.feature_mapping import train_feature_map_ratio, test_feature_map_ratio, train_feature_map_custom, test_feature_map_custom
 from FPT.logic.feature_functions import make_feature_custom
 from FPT.logic.train_functions import train_model, predict_model
+from FPT.vo.pd_mapping_vo import PDMappingVO
+from statistics import mean 
 
 class FastPayTrainLogic:
     """
@@ -44,10 +46,14 @@ class FastPayTrainLogic:
         transformed_y_pred, transformed_y_test = predict_model(
             model, x_test, y_test,test_feature_map, test_scaler, real_test_target
         )
+        multi_transformed_y_pred = [x*1.56 for x in transformed_y_pred]
+        multi_transformed_y_test =  [x*2 for x in transformed_y_test]
         output_df = pd.DataFrame(
-            {"predict": transformed_y_pred, "real": transformed_y_test}
+            {"predict": transformed_y_pred, "real": transformed_y_test, "multi*real" : multi_transformed_y_test, "multi*predict" : multi_transformed_y_pred}
         )
-
+        percent = [(multi_transformed_y_test[i]-multi_transformed_y_pred[i])/multi_transformed_y_test[i] for i in range(len(multi_transformed_y_test))]
+        print(percent)
+        print(mean(percent))
         plot_plotly(output_df, "predict_output")
 
     def run(self):

@@ -44,13 +44,17 @@ class PDMappingVO:
     SUM_HARMONEY_CHECK: str = "sum_harmony_check"
     IPO_NAME: str = "Name"
     IPO_TICKET: str = "is_IPO_ticket"
-
+    TYPE :str ="type"
+    CLASSIFICATION:str = "classificatoin"
+    REGRESSION:str = "regression"
     TRAIN_MODEL: str = "train_model"
     COLUMN_NAME: str = "column_name"
     GET_DIVIDE: str = "get_divide"
     DIVIDE: str = "_divide_"
     GET_RATIO: str = "get_ratio"
     RATIO: str = "_ratio_"
+    GET_CLASSIFY:str  = "get_classify"
+    CLASSIFY:str = "_classify_"
     GET_LOGARITHM: str = "get_logarithm"
     LOGARITHM: str = "_logarithm_"
     GET_STANDARD: str = "get_standard"
@@ -66,3 +70,4 @@ class PDMappingVO:
     
     NO_MODEL_ERR: str = "Please provide  a model name"
     NO_TRANSFORM_OBJ: str = "please provide valid transform"
+    NO_MODEL_TYPE:str = "please provide model type in test features"
